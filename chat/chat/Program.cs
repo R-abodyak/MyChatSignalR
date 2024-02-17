@@ -1,5 +1,7 @@
+using chat.Data;
 using chat.Hubs;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 public class Program
@@ -13,9 +15,20 @@ public class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
+                IConfiguration configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .Build();
+
+                // Get connection string
+                var connectionString = configuration.GetConnectionString("DefaultConnection");
                 webBuilder.ConfigureServices(services =>
                 {
                     services.AddSignalR();
+                    services.AddDbContext<ChatContext>(options =>
+                    {
+                        options.UseSqlServer(connectionString: connectionString);
+                    });
                     services.AddControllersWithViews();
 
                 });
