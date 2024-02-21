@@ -1,0 +1,24 @@
+﻿version: '3.8'
+
+services:
+  chat:
+    image: chat
+    build:
+      context: .
+      dockerfile: chat/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sql
+    # Add any other configuration for your main service here
+    
+  sql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: rawan-sql
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=rawan12*
